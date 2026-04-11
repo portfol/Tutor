@@ -91,22 +91,53 @@
 
     // 스탯 카드 업데이트
     const kospi = (data.indices || []).find((i) => i.name === "KOSPI");
-    if (kospi && typeof kospi.changePct === "number") {
+    if (kospi) {
+      const wk = kospi.week && typeof kospi.week.changePct === "number"
+        ? kospi.week.changePct
+        : kospi.changePct;
       updateStatCard(
-        "KOSPI 일간 등락",
-        `${fmtSigned(kospi.changePct)}%`,
-        kospi.change >= 0 ? "up" : "down",
+        "KOSPI 주간 등락",
+        `${fmtSigned(wk)}%`,
+        (wk || 0) >= 0 ? "up" : "down",
         `종가 ${fmtPrice(kospi.close)} · ${kospi.date || ""}`
       );
     }
 
     const usdkrw = (data.fx || []).find((f) => f.name === "USD/KRW");
     if (usdkrw && typeof usdkrw.close === "number") {
+      const wk = usdkrw.week && typeof usdkrw.week.changePct === "number"
+        ? usdkrw.week.changePct
+        : null;
+      const subPieces = [
+        `전일비 ${fmtSigned(usdkrw.change || 0)} (${fmtSigned(usdkrw.changePct || 0)}%)`,
+      ];
+      if (wk !== null) subPieces.push(`주간 ${fmtSigned(wk)}%`);
       updateStatCard(
         "원/달러 환율",
         fmtPrice(usdkrw.close),
         usdkrw.change >= 0 ? "down" : "up", // 환율 하락 = 원화 강세 (녹색)
-        `전일비 ${fmtSigned(usdkrw.change || 0)} (${fmtSigned(usdkrw.changePct || 0)}%)`
+        subPieces.join(" · ")
+      );
+    }
+
+    // 외국인 순매수 (KOSPI dealTrend, 단위: 억원)
+    if (kospi && kospi.dealTrend && typeof kospi.dealTrend.foreign === "number") {
+      const eok = kospi.dealTrend.foreign;         // 억원
+      const jo = eok / 10000;                       // 조원
+      const absJo = Math.abs(jo);
+      const display =
+        absJo >= 1
+          ? `${fmtSigned(jo, 2)}조`
+          : `${fmtSigned(eok, 0)}억`;
+      const biz = (kospi.dealTrend.bizdate || "").replace(
+        /^(\d{4})(\d{2})(\d{2})$/,
+        "$1-$2-$3"
+      );
+      updateStatCard(
+        "외국인 순매수",
+        display,
+        eok >= 0 ? "up" : "down",
+        `KOSPI · ${biz || kospi.date || ""}`
       );
     }
 

@@ -2,12 +2,17 @@
 """한국거래소(KRX) 시장 데이터 수집 스크립트.
 
 KRX 정보데이터시스템(data.krx.co.kr)이 2025년부터 데이터 조회에 로그인을
-요구하면서 익명 스크래핑이 사실상 막혔다. 대안으로 KRX로부터 실시간 시세를
-공급받아 배포하는 네이버 금융 모바일 API를 이용해 주요 지수 종가와 환율을
-수집한 뒤 ``data/market.json``에 저장한다.
+요구하면서 익명 스크래핑이 막혔다. 대안으로 KRX 실시간 피드를 공급받는
+네이버 금융 모바일 API(`m.stock.naver.com/api/index`)를 경유해 다음을 수집한다.
 
-GitHub Actions 스케줄에서 주기적으로 실행되어 정적 페이지(`app.js`)가
-fetch 할 수 있는 JSON 산출물을 갱신한다.
+- KOSPI / KOSDAQ / KOSPI 200 종가·등락률·전일종가
+- 각 지수의 52주 최고/최저
+- KOSPI 투자자별 순매수(외국인/기관/개인, 단위: 억원)
+- 최근 5 영업일 종가로부터 산출한 주간 변동률
+- USD/KRW 환율 (서울외국환중개 기준, 네이버 경유)
+
+결과는 ``data/market.json`` 으로 저장되며 GitHub Actions 스케줄에서
+주기적으로 갱신된다.
 """
 from __future__ import annotations
 
@@ -28,31 +33,30 @@ UA = (
 )
 HEADERS = {"User-Agent": UA, "Accept": "application/json, text/plain, */*"}
 
-# 네이버 금융 종목(지수) 코드 — KRX 공식 코드와 1:1 매핑된다.
-#   KOSPI     -> KOSPI
-#   KOSDAQ    -> KOSDAQ
-#   KOSPI 200 -> KPI200
+# (표시명, 네이버 지수코드, KRX 티커)
 INDICES: list[tuple[str, str, str]] = [
-    # (표시명,      네이버 코드, KRX 티커)
-    ("KOSPI",      "KOSPI",  "1001"),
-    ("KOSDAQ",     "KOSDAQ", "2001"),
-    ("KOSPI 200",  "KPI200", "1028"),
+    ("KOSPI",     "KOSPI",  "1001"),
+    ("KOSDAQ",    "KOSDAQ", "2001"),
+    ("KOSPI 200", "KPI200", "1028"),
 ]
 
-INDEX_URL = "https://m.stock.naver.com/api/index/{code}/basic"
+BASE = "https://m.stock.naver.com/api/index/{code}"
+BASIC_URL = BASE + "/basic"
+INTEGRATION_URL = BASE + "/integration"
+PRICE_URL = BASE + "/price"
 FX_URL = (
     "https://m.stock.naver.com/front-api/marketIndex/prices"
     "?category=exchange&reutersCode={code}&pageSize=10"
 )
 
 
-def _to_float(text: str | float | int | None) -> float | None:
+def _to_float(text: Any) -> float | None:
     if text is None:
         return None
     if isinstance(text, (int, float)):
         return float(text)
-    t = str(text).replace(",", "").strip()
-    if not t:
+    t = str(text).replace(",", "").replace("+", "").strip()
+    if not t or t == "-":
         return None
     try:
         return float(t)
@@ -60,81 +64,131 @@ def _to_float(text: str | float | int | None) -> float | None:
         return None
 
 
-def fetch_index(display_name: str, code: str, ticker: str) -> dict[str, Any] | None:
-    """네이버 금융 모바일 API에서 지수 basic 정보를 수집."""
+def _apply_direction(value: float | None, ftype_name: str) -> float | None:
+    """fluctuationsType 가 FALLING 이면 부호를 뒤집는다 (네이버는 절댓값 반환)."""
+    if value is None:
+        return None
+    if ftype_name == "FALLING" and value > 0:
+        return -value
+    return value
+
+
+def _get(url: str) -> dict | list | None:
     try:
-        r = requests.get(INDEX_URL.format(code=code), headers=HEADERS, timeout=10)
+        r = requests.get(url, headers=HEADERS, timeout=10)
         r.raise_for_status()
-        d = r.json()
+        return r.json()
     except Exception as exc:
-        print(f"[warn] {display_name} fetch failed: {exc}", file=sys.stderr)
+        print(f"[warn] GET failed {url}: {exc}", file=sys.stderr)
         return None
 
-    close = _to_float(d.get("closePrice"))
-    diff = _to_float(d.get("compareToPreviousClosePrice"))
-    pct = _to_float(d.get("fluctuationsRatio"))
-    traded_at = d.get("localTradedAt") or ""
-    direction = (d.get("compareToPreviousPrice") or {}).get("name") if isinstance(
-        d.get("compareToPreviousPrice"), dict
-    ) else None
+
+def fetch_index(display_name: str, code: str, ticker: str) -> dict[str, Any] | None:
+    """basic + integration + price(5일) 를 합쳐 풍부한 지수 스냅샷을 반환."""
+    basic = _get(BASIC_URL.format(code=code))
+    if not isinstance(basic, dict):
+        return None
+
+    close = _to_float(basic.get("closePrice"))
+    diff = _to_float(basic.get("compareToPreviousClosePrice"))
+    pct = _to_float(basic.get("fluctuationsRatio"))
+    ftype = (basic.get("fluctuationsType") or {}).get("name") or ""
+    diff = _apply_direction(diff, ftype) or 0.0
+    pct = _apply_direction(pct, ftype) or 0.0
+    traded_at = basic.get("localTradedAt") or ""
 
     if close is None:
         return None
 
-    # fluctuationsType 은 RISING / FALLING / FLAT 등
-    ftype = (d.get("fluctuationsType") or {})
-    if isinstance(ftype, dict):
-        ftype_name = ftype.get("name") or ""
-    else:
-        ftype_name = ""
-    if ftype_name == "FALLING" and diff is not None and diff > 0:
-        diff = -diff
-    if ftype_name == "FALLING" and pct is not None and pct > 0:
-        pct = -pct
-
-    return {
+    snapshot: dict[str, Any] = {
         "name": display_name,
         "ticker": ticker,
         "naverCode": code,
         "close": round(close, 2),
-        "change": round(diff, 2) if diff is not None else 0.0,
-        "changePct": round(pct, 2) if pct is not None else 0.0,
+        "change": round(diff, 2),
+        "changePct": round(pct, 2),
         "date": traded_at[:10] if traded_at else None,
         "tradedAt": traded_at or None,
-        "marketStatus": d.get("marketStatus"),
+        "marketStatus": basic.get("marketStatus"),
     }
+
+    integration = _get(INTEGRATION_URL.format(code=code))
+    if isinstance(integration, dict):
+        infos = {
+            ti.get("code"): _to_float(ti.get("value"))
+            for ti in integration.get("totalInfos") or []
+        }
+        snapshot["prevClose"] = infos.get("lastClosePrice")
+        snapshot["open"] = infos.get("openPrice")
+        snapshot["high"] = infos.get("highPrice")
+        snapshot["low"] = infos.get("lowPrice")
+        snapshot["high52w"] = infos.get("highPriceOf52Weeks")
+        snapshot["low52w"] = infos.get("lowPriceOf52Weeks")
+
+        # 투자자별 매매동향 (단위: 억원) — KOSPI/KOSDAQ만 제공
+        deal = integration.get("dealTrendInfo") or {}
+        if deal and deal.get("foreignValue") is not None:
+            snapshot["dealTrend"] = {
+                "bizdate": deal.get("bizdate"),
+                "foreign":       _to_float(deal.get("foreignValue")),
+                "personal":      _to_float(deal.get("personalValue")),
+                "institutional": _to_float(deal.get("institutionalValue")),
+                "unit": "억원",
+            }
+
+    # 5 영업일 종가로 주간 변동률 산출
+    price_rows = _get(PRICE_URL.format(code=code) + "?pageSize=7")
+    if isinstance(price_rows, list) and len(price_rows) >= 2:
+        closes = [_to_float(row.get("closePrice")) for row in price_rows[:6]]
+        closes = [c for c in closes if c is not None]
+        if len(closes) >= 2:
+            latest_c = closes[0]
+            base_c = closes[-1]
+            snapshot["week"] = {
+                "change": round(latest_c - base_c, 2),
+                "changePct": round((latest_c - base_c) / base_c * 100, 2)
+                if base_c else 0.0,
+                "samples": len(closes),
+            }
+
+    return snapshot
 
 
 def fetch_fx(reuters_code: str, display: str) -> dict[str, Any] | None:
-    try:
-        r = requests.get(FX_URL.format(code=reuters_code), headers=HEADERS, timeout=10)
-        r.raise_for_status()
-        d = r.json()
-    except Exception as exc:
-        print(f"[warn] {display} fetch failed: {exc}", file=sys.stderr)
+    d = _get(FX_URL.format(code=reuters_code))
+    if not isinstance(d, dict):
         return None
-
-    rows = (d or {}).get("result") or []
+    rows = d.get("result") or []
     if not rows:
         return None
+
     latest = rows[0]
     close = _to_float(latest.get("closePrice"))
     diff = _to_float(latest.get("fluctuations"))
     pct = _to_float(latest.get("fluctuationsRatio"))
     ftype = (latest.get("fluctuationsType") or {}).get("name") or ""
-    if ftype == "FALLING":
-        if diff is not None and diff > 0:
-            diff = -diff
-        if pct is not None and pct > 0:
-            pct = -pct
-    return {
+    diff = _apply_direction(diff, ftype) or 0.0
+    pct = _apply_direction(pct, ftype) or 0.0
+
+    snap = {
         "name": display,
         "reutersCode": reuters_code,
         "close": round(close, 2) if close is not None else None,
-        "change": round(diff, 2) if diff is not None else 0.0,
-        "changePct": round(pct, 2) if pct is not None else 0.0,
+        "change": round(diff, 2),
+        "changePct": round(pct, 2),
         "date": latest.get("localTradedAt"),
     }
+    # 주간(최근 5 영업일) 변동률
+    history_closes = [_to_float(r.get("closePrice")) for r in rows[:6]]
+    history_closes = [c for c in history_closes if c is not None]
+    if len(history_closes) >= 2 and close is not None:
+        base = history_closes[-1]
+        snap["week"] = {
+            "change": round(close - base, 2),
+            "changePct": round((close - base) / base * 100, 2) if base else 0.0,
+            "samples": len(history_closes),
+        }
+    return snap
 
 
 def main() -> int:
@@ -143,27 +197,36 @@ def main() -> int:
         snap = fetch_index(display, code, ticker)
         if snap:
             snapshots.append(snap)
-            print(
+            msg = (
                 f"[info] {display}: {snap['close']:.2f} "
-                f"({snap['changePct']:+.2f}%) [{snap['date']}]"
+                f"({snap['changePct']:+.2f}%) [{snap.get('date')}]"
             )
+            if snap.get("week"):
+                msg += f" · 주간 {snap['week']['changePct']:+.2f}%"
+            if snap.get("dealTrend"):
+                f = snap["dealTrend"]["foreign"]
+                if f is not None:
+                    msg += f" · 외국인 {f:+,.0f}억"
+            print(msg)
         else:
             print(f"[warn] {display}: no data", file=sys.stderr)
 
     fx = fetch_fx("FX_USDKRW", "USD/KRW")
     if fx:
-        print(
-            f"[info] USD/KRW: {fx['close']:.2f} "
-            f"({fx['changePct']:+.2f}%) [{fx['date']}]"
+        week = (
+            f" · 주간 {fx['week']['changePct']:+.2f}%"
+            if fx.get("week") else ""
         )
+        print(f"[info] USD/KRW: {fx['close']:.2f} ({fx['changePct']:+.2f}%){week}")
 
     payload = {
         "updatedAt": datetime.now(KST).isoformat(timespec="seconds"),
         "source": "Naver Finance Mobile API (KRX real-time feed)",
         "notice": (
-            "KRX 정보데이터시스템(data.krx.co.kr) 이 로그인 월을 도입하여 "
-            "익명 직접조회가 불가함에 따라 KRX 데이터를 실시간 제공하는 "
-            "네이버 금융 모바일 API를 경유한다."
+            "KRX 정보데이터시스템(data.krx.co.kr)이 로그인 월을 도입하여 "
+            "익명 직접조회가 불가함에 따라 KRX 실시간 시세를 공급받는 "
+            "네이버 금융 모바일 API를 경유한다. 값 단위: 지수=pt, 환율=KRW, "
+            "투자자별 순매수=억원."
         ),
         "indices": snapshots,
         "fx": [fx] if fx else [],
