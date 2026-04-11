@@ -1,20 +1,36 @@
 // 여의도 인사이트 - 클라이언트 렌더링 스크립트
+// data/market.json (GitHub Actions가 KRX 실시간 피드로부터 주기적으로 갱신)
+// 을 fetch 하여 지수 보드와 핵심 스탯 카드를 업데이트한다.
 (function () {
   "use strict";
 
-  const indices = [
-    { name: "KOSPI",     price: "2,742.18", chg: "+47.21 (+1.75%)", dir: "up" },
-    { name: "KOSDAQ",    price: "  868.34", chg: "+12.04 (+1.41%)", dir: "up" },
-    { name: "S&P 500",   price: "5,248.49", chg: "+22.10 (+0.42%)", dir: "up" },
-    { name: "NASDAQ",    price: "16,441.2", chg: "+85.63 (+0.52%)", dir: "up" },
-    { name: "상해종합",   price: "3,078.11", chg: " -9.80 (-0.32%)", dir: "down" },
-    { name: "WTI ($/bbl)", price: "   85.24", chg: "+1.12 (+1.33%)", dir: "up" },
-    { name: "USD/KRW",   price: "1,342.50", chg: " -4.20 (-0.31%)", dir: "down" }
+  /** Fallback (JSON 로드 실패 시에만 사용) */
+  const FALLBACK_INDICES = [
+    { name: "KOSPI",      price: "—", chg: "—", dir: "" },
+    { name: "KOSDAQ",     price: "—", chg: "—", dir: "" },
+    { name: "KOSPI 200",  price: "—", chg: "—", dir: "" },
+    { name: "USD/KRW",    price: "—", chg: "—", dir: "" },
   ];
 
-  const list = document.getElementById("index-list");
-  if (list) {
-    list.innerHTML = indices
+  /* ---------- 포매터 ---------- */
+  const fmtPrice = (v, digits = 2) =>
+    v.toLocaleString("ko-KR", {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    });
+
+  const fmtSigned = (v, digits = 2) =>
+    (v >= 0 ? "+" : "") +
+    v.toLocaleString("ko-KR", {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    });
+
+  /* ---------- 렌더 ---------- */
+  function renderBoard(items) {
+    const list = document.getElementById("index-list");
+    if (!list) return;
+    list.innerHTML = items
       .map(
         (i) => `
         <li>
@@ -28,26 +44,125 @@
       .join("");
   }
 
-  // 오늘 날짜 자동 표기 (KST 기준)
-  const today = new Date();
-  const y = today.getFullYear();
-  const m = String(today.getMonth() + 1).padStart(2, "0");
-  const d = String(today.getDate()).padStart(2, "0");
-  const dateStr = `${y}-${m}-${d}`;
-  const rd = document.getElementById("report-date");
-  const fd = document.getElementById("footer-date");
-  if (rd) rd.textContent = dateStr;
-  if (fd) fd.textContent = dateStr;
+  function updateStatCard(labelText, value, dir, sub) {
+    document.querySelectorAll(".stat-card").forEach((card) => {
+      const label = card.querySelector(".stat-label");
+      if (!label || label.textContent.trim() !== labelText) return;
+      const val = card.querySelector(".stat-value");
+      const s = card.querySelector(".stat-sub");
+      if (val) {
+        val.textContent = value;
+        val.classList.remove("up", "down");
+        if (dir) val.classList.add(dir);
+      }
+      if (s && sub !== undefined) s.textContent = sub;
+    });
+  }
 
-  // 섹션 스무스 스크롤
+  /* ---------- KRX JSON 적용 ---------- */
+  function applyMarketData(data) {
+    if (!data) return;
+
+    const board = [];
+
+    (data.indices || []).forEach((i) => {
+      if (typeof i.close !== "number") return;
+      const dir = (i.change || 0) >= 0 ? "up" : "down";
+      board.push({
+        name: i.name,
+        price: fmtPrice(i.close),
+        chg: `${fmtSigned(i.change || 0)} (${fmtSigned(i.changePct || 0)}%)`,
+        dir,
+      });
+    });
+
+    (data.fx || []).forEach((f) => {
+      if (typeof f.close !== "number") return;
+      const dir = (f.change || 0) >= 0 ? "up" : "down";
+      board.push({
+        name: f.name,
+        price: fmtPrice(f.close),
+        chg: `${fmtSigned(f.change || 0)} (${fmtSigned(f.changePct || 0)}%)`,
+        dir,
+      });
+    });
+
+    if (board.length) renderBoard(board);
+
+    // 스탯 카드 업데이트
+    const kospi = (data.indices || []).find((i) => i.name === "KOSPI");
+    if (kospi && typeof kospi.changePct === "number") {
+      updateStatCard(
+        "KOSPI 일간 등락",
+        `${fmtSigned(kospi.changePct)}%`,
+        kospi.change >= 0 ? "up" : "down",
+        `종가 ${fmtPrice(kospi.close)} · ${kospi.date || ""}`
+      );
+    }
+
+    const usdkrw = (data.fx || []).find((f) => f.name === "USD/KRW");
+    if (usdkrw && typeof usdkrw.close === "number") {
+      updateStatCard(
+        "원/달러 환율",
+        fmtPrice(usdkrw.close),
+        usdkrw.change >= 0 ? "down" : "up", // 환율 하락 = 원화 강세 (녹색)
+        `전일비 ${fmtSigned(usdkrw.change || 0)} (${fmtSigned(usdkrw.changePct || 0)}%)`
+      );
+    }
+
+    // 헤더/푸터 날짜를 데이터 기준일로 갱신
+    const baseDate =
+      (kospi && kospi.date) ||
+      (usdkrw && usdkrw.date) ||
+      (data.updatedAt && data.updatedAt.slice(0, 10));
+    if (baseDate) {
+      const rd = document.getElementById("report-date");
+      const fd = document.getElementById("footer-date");
+      if (rd) rd.textContent = baseDate;
+      if (fd) fd.textContent = baseDate;
+    }
+
+    // 데이터 소스 배지
+    const src = document.getElementById("data-source");
+    if (src) {
+      const ts = data.updatedAt ? data.updatedAt.replace("T", " ").slice(0, 16) : "";
+      src.textContent = `데이터 최종 갱신: ${ts} KST`;
+      src.title = data.source || "";
+    }
+  }
+
+  /* ---------- 부팅 ---------- */
+
+  // 1) 즉시 자리표시 렌더 (JSON 늦게 도착해도 레이아웃 유지)
+  renderBoard(FALLBACK_INDICES);
+
+  // 2) 오늘 날짜(브라우저 기준) 임시 표기
+  const today = new Date();
+  const dateStr = today.toISOString().slice(0, 10);
+  const rd0 = document.getElementById("report-date");
+  const fd0 = document.getElementById("footer-date");
+  if (rd0) rd0.textContent = dateStr;
+  if (fd0) fd0.textContent = dateStr;
+
+  // 3) KRX 스냅샷 로드
+  fetch("data/market.json", { cache: "no-store" })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => {
+      if (d) applyMarketData(d);
+    })
+    .catch((err) => {
+      console.warn("[market.json] load failed", err);
+    });
+
+  // 4) 섹션 스무스 스크롤
   document.querySelectorAll('a[href^="#"]').forEach((a) => {
     a.addEventListener("click", (e) => {
       const id = a.getAttribute("href");
       if (id && id.length > 1) {
-        const target = document.querySelector(id);
-        if (target) {
+        const t = document.querySelector(id);
+        if (t) {
           e.preventDefault();
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          t.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }
     });

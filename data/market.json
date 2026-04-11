@@ -1,0 +1,50 @@
+{
+  "updatedAt": "2026-04-11T11:20:35+09:00",
+  "source": "Naver Finance Mobile API (KRX real-time feed)",
+  "notice": "KRX 정보데이터시스템(data.krx.co.kr) 이 로그인 월을 도입하여 익명 직접조회가 불가함에 따라 KRX 데이터를 실시간 제공하는 네이버 금융 모바일 API를 경유한다.",
+  "indices": [
+    {
+      "name": "KOSPI",
+      "ticker": "1001",
+      "naverCode": "KOSPI",
+      "close": 5858.87,
+      "change": 80.86,
+      "changePct": 1.4,
+      "date": "2026-04-10",
+      "tradedAt": "2026-04-10T18:59:00+09:00",
+      "marketStatus": "CLOSE"
+    },
+    {
+      "name": "KOSDAQ",
+      "ticker": "2001",
+      "naverCode": "KOSDAQ",
+      "close": 1093.63,
+      "change": 17.63,
+      "changePct": 1.64,
+      "date": "2026-04-10",
+      "tradedAt": "2026-04-10T18:59:00+09:00",
+      "marketStatus": "CLOSE"
+    },
+    {
+      "name": "KOSPI 200",
+      "ticker": "1028",
+      "naverCode": "KPI200",
+      "close": 878.78,
+      "change": 13.03,
+      "changePct": 1.51,
+      "date": "2026-04-10",
+      "tradedAt": "2026-04-10T18:59:00+09:00",
+      "marketStatus": "CLOSE"
+    }
+  ],
+  "fx": [
+    {
+      "name": "USD/KRW",
+      "reutersCode": "FX_USDKRW",
+      "close": 1485.5,
+      "change": 9.5,
+      "changePct": 0.64,
+      "date": "2026-04-10"
+    }
+  ]
+}
