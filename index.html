@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>여의도 인사이트 | 10년차 애널리스트의 증시 전망</title>
+<meta name="description" content="10년차 여의도 증권 애널리스트가 분석하는 대외·대내 변수 기반 증시 전망 리포트" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-mark">YI</div>
+        <div class="brand-text">
+          <h1>여의도 인사이트</h1>
+          <p>Yeouido Insight · Market Outlook Report</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#overview">개요</a>
+        <a href="#external">대외 변수</a>
+        <a href="#internal">대내 변수</a>
+        <a href="#outlook">전망</a>
+        <a href="#strategy">전략</a>
+      </nav>
+      <div class="report-meta">
+        <span class="badge badge-live">LIVE</span>
+        <span id="report-date">2026-04-11</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <span class="tag">Weekly Strategy Note</span>
+          <h2>불확실성의 한가운데,<br/>다시 펀더멘털이 말할 시간</h2>
+          <p class="lede">
+            10년차 여의도 애널리스트의 시선으로 정리한 이번 주 증시 점검.
+            연준의 금리 경로, 중국 제조업 회복 속도, 그리고 국내 반도체 사이클의
+            재점화 시그널을 중심으로 향후 3개월의 시장 흐름을 진단합니다.
+          </p>
+          <div class="cta-row">
+            <a href="#outlook" class="btn btn-primary">전망 바로가기</a>
+            <a href="#strategy" class="btn btn-ghost">포트폴리오 전략</a>
+          </div>
+        </div>
+        <aside class="hero-board" aria-label="주요 지수 현황">
+          <h3>주요 지수</h3>
+          <ul class="index-list" id="index-list">
+            <!-- JS로 렌더링 -->
+          </ul>
+          <p class="disclaimer">* 본 수치는 샘플 데이터이며 투자 권유가 아닙니다.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- OVERVIEW -->
+    <section id="overview" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Market Overview</span>
+          <h2>이번 주 시장 요약</h2>
+          <p>매크로, 금리, 환율, 업종 로테이션을 한 장에 정리했습니다.</p>
+        </div>
+        <div class="grid-4">
+          <div class="card stat-card">
+            <p class="stat-label">KOSPI 주간 등락</p>
+            <p class="stat-value up">+1.74%</p>
+            <p class="stat-sub">반도체·2차전지 주도</p>
+          </div>
+          <div class="card stat-card">
+            <p class="stat-label">원/달러 환율</p>
+            <p class="stat-value down">1,342.5</p>
+            <p class="stat-sub">고점 대비 -1.8%</p>
+          </div>
+          <div class="card stat-card">
+            <p class="stat-label">美 10Y 국채금리</p>
+            <p class="stat-value">4.18%</p>
+            <p class="stat-sub">디스인플레이션 재확인</p>
+          </div>
+          <div class="card stat-card">
+            <p class="stat-label">외국인 순매수</p>
+            <p class="stat-value up">+1.6조</p>
+            <p class="stat-sub">3주 연속 순유입</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXTERNAL -->
+    <section id="external" class="section alt">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">External · 대외 변수</span>
+          <h2>글로벌 매크로, 변곡점의 신호</h2>
+        </div>
+        <div class="grid-3">
+          <article class="card analysis">
+            <header class="analysis-head">
+              <h3>① 연준(Fed) 금리 경로</h3>
+              <span class="pill pill-neutral">중립</span>
+            </header>
+            <p>
+              3월 FOMC 의사록은 연내 1~2회 인하 가능성을 열어두되, 서비스 물가의 끈적함을
+              재차 강조했습니다. Dot Plot의 장기 중립금리 상향은 "고금리 장기화(Higher for longer)"
+              프레임을 유지하지만, 고용 둔화 조짐이 누적되며 6월 선제 인하 기대가 재점화되고 있습니다.
+            </p>
+            <ul class="bullets">
+              <li>근원 PCE 2.7% → 2.5% 완만한 하향 안정</li>
+              <li>비농업 고용 +17만 명, 과열은 벗어남</li>
+              <li>시장 내재 인하 확률: 6월 58%, 7월 72%</li>
+            </ul>
+          </article>
+
+          <article class="card analysis">
+            <header class="analysis-head">
+              <h3>② 중국 경기와 위안화</h3>
+              <span class="pill pill-warn">경계</span>
+            </header>
+            <p>
+              차이신 제조업 PMI가 50.9로 확장 국면을 유지했지만, 부동산 신규 착공과
+              지방정부 재정은 여전히 부진합니다. 인민은행의 RRR 인하와 특별 국채 발행 카드가
+              단기 반등을 지지하나, 구조적 회복까지는 시간이 필요합니다.
+            </p>
+            <ul class="bullets">
+              <li>부동산 투자 YoY -9.5%, 바닥 확인 미흡</li>
+              <li>수출은 AI·반도체 주도 호조 지속</li>
+              <li>위안화 절상 전환 시 한국 수출주 동반 강세</li>
+            </ul>
+          </article>
+
+          <article class="card analysis">
+            <header class="analysis-head">
+              <h3>③ 지정학 · 유가</h3>
+              <span class="pill pill-risk">리스크</span>
+            </header>
+            <p>
+              중동 긴장 재고조, 러·우 종전 협상 지연으로 WTI가 배럴당 85달러선을 재차 시험 중입니다.
+              에너지 인플레 재점화 가능성은 연준의 금리 인하 시점을 후행시킬 수 있는 핵심 리스크입니다.
+            </p>
+            <ul class="bullets">
+              <li>OPEC+ 감산 6월까지 연장 가능성</li>
+              <li>홍해 물류 차질, 운임지수(SCFI) 재상승</li>
+              <li>안전자산(금) 신고가 경신 흐름</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERNAL -->
+    <section id="internal" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Internal · 대내 변수</span>
+          <h2>국내 펀더멘털과 수급</h2>
+        </div>
+        <div class="split">
+          <div class="card analysis wide">
+            <h3>반도체 사이클, 2라운드 진입</h3>
+            <p>
+              HBM3E 공급 부족이 이어지며 D램 고정가는 7개월 연속 상승세입니다.
+              삼성전자·SK하이닉스의 1Q 잠정 실적은 컨센서스를 상회했고,
+              후공정(OSAT) 및 장비 밸류체인으로 온기가 확산되고 있습니다.
+              AI 서버 Capex 확대 기조는 최소 2026년 말까지 이어질 전망입니다.
+            </p>
+            <div class="mini-grid">
+              <div>
+                <p class="mini-label">DRAM 고정가(YoY)</p>
+                <p class="mini-value up">+38%</p>
+              </div>
+              <div>
+                <p class="mini-label">NAND 가동률</p>
+                <p class="mini-value up">92%</p>
+              </div>
+              <div>
+                <p class="mini-label">반도체 수출</p>
+                <p class="mini-value up">+45%</p>
+              </div>
+              <div>
+                <p class="mini-label">업종 PBR</p>
+                <p class="mini-value">1.6x</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card analysis">
+            <h3>한은 통화정책 & 가계부채</h3>
+            <p>
+              4월 금통위는 기준금리 3.25% 동결이 유력합니다. 디스인플레이션은 진행 중이나
+              원화 약세와 가계부채 관리 필요성이 인하 시점을 제약합니다.
+              스트레스 DSR 2단계 시행 이후 가계대출 증가세가 둔화되고 있다는 점은 긍정적입니다.
+            </p>
+            <ul class="bullets">
+              <li>CPI 2.9% → 목표 2% 수렴 진행 중</li>
+              <li>첫 인하 시점: 7~8월 컨센서스</li>
+              <li>밸류업 세제지원 입법화 모멘텀 재부각</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OUTLOOK -->
+    <section id="outlook" class="section alt">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Outlook</span>
+          <h2>향후 3개월 증시 시나리오</h2>
+        </div>
+        <div class="scenario-grid">
+          <div class="card scenario bull">
+            <span class="scenario-tag">상방 시나리오 · 확률 35%</span>
+            <h3>2,900pt 상향 돌파</h3>
+            <p>
+              연준 6월 인하 시그널 + 중국 부양책 가시화 + 반도체 실적 서프라이즈가
+              동시에 확인될 경우. 외국인 순매수 8조 이상 유입 기대.
+            </p>
+            <ul class="bullets">
+              <li>주도주: 반도체, 바이오, 조선</li>
+              <li>환율: 1,300원 하회 가능</li>
+            </ul>
+          </div>
+          <div class="card scenario base">
+            <span class="scenario-tag">기본 시나리오 · 확률 50%</span>
+            <h3>2,650 ~ 2,820pt 박스권</h3>
+            <p>
+              견조한 실적 시즌 속 금리 경계감이 교차. 지수보다는 종목·테마 장세가 이어지며,
+              밸류업 수혜주와 AI 밸류체인의 차별화 랠리가 지속될 전망.
+            </p>
+            <ul class="bullets">
+              <li>주도주: 저PBR, AI 인프라, 방산</li>
+              <li>환율: 1,320~1,360원 박스</li>
+            </ul>
+          </div>
+          <div class="card scenario bear">
+            <span class="scenario-tag">하방 시나리오 · 확률 15%</span>
+            <h3>2,500pt 재하락 테스트</h3>
+            <p>
+              중동 리스크 격화에 따른 유가 100달러 재진입 + 미 CPI 재반등 조합.
+              위험자산 전반의 디레버리징이 진행될 수 있는 구간.
+            </p>
+            <ul class="bullets">
+              <li>방어주: 통신, 유틸리티, 필수소비재</li>
+              <li>현금 비중 15% 이상 확대 권고</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STRATEGY -->
+    <section id="strategy" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Strategy</span>
+          <h2>포트폴리오 액션 플랜</h2>
+        </div>
+        <div class="grid-2">
+          <div class="card action">
+            <h3>Overweight · 비중확대</h3>
+            <ul class="bullets strong">
+              <li><b>반도체 밸류체인</b> — HBM·후공정·소재 중심 분할 매수</li>
+              <li><b>조선</b> — 친환경 선박 수주 모멘텀 지속</li>
+              <li><b>금융 · 지주사</b> — 밸류업 수혜, 배당 매력 확대</li>
+            </ul>
+          </div>
+          <div class="card action underweight">
+            <h3>Underweight · 비중축소</h3>
+            <ul class="bullets strong">
+              <li><b>2차전지 셀</b> — 재고조정 지속, 단기 반등 트레이딩 관점</li>
+              <li><b>건설 · 부동산 PF 노출</b> — 신용 스프레드 경계</li>
+              <li><b>리테일 유통</b> — 내수 회복 지연, 이익 가이던스 하향</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote">
+          <p>"시장은 늘 틀리고, 가끔 맞는다. 그러나 펀더멘털은 결국 제 값을 찾는다."</p>
+          <span>— 여의도 인사이트 리서치팀</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>여의도 인사이트 (Yeouido Insight)</strong>
+        <p>본 자료는 정보 제공 목적으로 작성되었으며, 투자 결과에 대한 법적 책임을 지지 않습니다.</p>
+      </div>
+      <div class="foot-meta">
+        <p>© 2026 Yeouido Insight Research</p>
+        <p>Last updated: <span id="footer-date">2026-04-11</span></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
