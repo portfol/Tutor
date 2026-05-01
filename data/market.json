@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-01T14:55:27+09:00",
+  "updatedAt": "2026-05-01T17:06:05+09:00",
   "source": "Naver Finance Mobile API (KRX real-time feed)",
   "notice": "KRX 정보데이터시스템(data.krx.co.kr)이 로그인 월을 도입하여 익명 직접조회가 불가함에 따라 KRX 실시간 시세를 공급받는 네이버 금융 모바일 API를 경유한다. 값 단위: 지수=pt, 환율=KRW, 투자자별 순매수=억원.",
   "indices": [
@@ -95,13 +95,13 @@
     {
       "name": "USD/KRW",
       "reutersCode": "FX_USDKRW",
-      "close": 1477.4,
-      "change": -10.6,
-      "changePct": -0.71,
+      "close": 1475.5,
+      "change": -12.5,
+      "changePct": -0.84,
       "date": "2026-04-30",
       "week": {
-        "change": -6.6,
-        "changePct": -0.44,
+        "change": -8.5,
+        "changePct": -0.57,
         "samples": 6
       }
     }
