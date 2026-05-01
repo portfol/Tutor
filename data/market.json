@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-30T16:53:55+09:00",
+  "updatedAt": "2026-05-01T11:32:53+09:00",
   "source": "Naver Finance Mobile API (KRX real-time feed)",
   "notice": "KRX 정보데이터시스템(data.krx.co.kr)이 로그인 월을 도입하여 익명 직접조회가 불가함에 따라 KRX 실시간 시세를 공급받는 네이버 금융 모바일 API를 경유한다. 값 단위: 지수=pt, 환율=KRW, 투자자별 순매수=억원.",
   "indices": [
@@ -11,7 +11,7 @@
       "change": -92.03,
       "changePct": -1.38,
       "date": "2026-04-30",
-      "tradedAt": "2026-04-30T16:52:00+09:00",
+      "tradedAt": "2026-04-30T18:59:00+09:00",
       "marketStatus": "CLOSE",
       "prevClose": 6690.9,
       "open": 6739.39,
@@ -21,8 +21,8 @@
       "low52w": 2540.57,
       "dealTrend": {
         "bizdate": "20260430",
-        "foreign": -14562.0,
-        "personal": 11877.0,
+        "foreign": -14559.0,
+        "personal": 11824.0,
         "institutional": 2838.0,
         "unit": "억원"
       },
@@ -40,7 +40,7 @@
       "change": -27.91,
       "changePct": -2.29,
       "date": "2026-04-30",
-      "tradedAt": "2026-04-30T16:53:00+09:00",
+      "tradedAt": "2026-04-30T18:59:00+09:00",
       "marketStatus": "CLOSE",
       "prevClose": 1220.26,
       "open": 1224.75,
@@ -69,7 +69,7 @@
       "change": -14.44,
       "changePct": -1.43,
       "date": "2026-04-30",
-      "tradedAt": "2026-04-30T16:53:00+09:00",
+      "tradedAt": "2026-04-30T18:59:00+09:00",
       "marketStatus": "CLOSE",
       "prevClose": 1006.59,
       "open": 1015.18,
@@ -95,13 +95,13 @@
     {
       "name": "USD/KRW",
       "reutersCode": "FX_USDKRW",
-      "close": 1482.5,
-      "change": -5.5,
-      "changePct": -0.37,
+      "close": 1477.0,
+      "change": -11.0,
+      "changePct": -0.74,
       "date": "2026-04-30",
       "week": {
-        "change": -1.5,
-        "changePct": -0.1,
+        "change": -7.0,
+        "changePct": -0.47,
         "samples": 6
       }
     }
