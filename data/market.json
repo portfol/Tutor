@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-25T13:49:13+09:00",
+  "updatedAt": "2026-08-25T14:19:04+09:00",
   "source": "Naver Finance Mobile API (KRX real-time feed)",
   "notice": "KRX 정보데이터시스템(data.krx.co.kr)이 로그인 월을 도입하여 익명 직접조회가 불가함에 따라 KRX 실시간 시세를 공급받는 네이버 금융 모바일 API를 경유한다. 값 단위: 지수=pt, 환율=KRW, 투자자별 순매수=억원.",
   "indices": [
@@ -7,28 +7,28 @@
       "name": "KOSPI",
       "ticker": "1001",
       "naverCode": "KOSPI",
-      "close": 6676.6,
-      "change": -20.36,
-      "changePct": -0.3,
+      "close": 6699.14,
+      "change": 2.18,
+      "changePct": 0.03,
       "date": "2026-08-25",
-      "tradedAt": "2026-08-25T13:48:00+09:00",
+      "tradedAt": "2026-08-25T14:18:00+09:00",
       "marketStatus": "OPEN",
       "prevClose": 6696.96,
       "open": 6535.93,
-      "high": 6693.51,
+      "high": 6704.96,
       "low": 6408.82,
       "high52w": 9385.59,
       "low52w": 3135.02,
       "dealTrend": {
         "bizdate": "20260825",
-        "foreign": -29230.0,
-        "personal": 9469.0,
-        "institutional": 7049.0,
+        "foreign": -31323.0,
+        "personal": 9986.0,
+        "institutional": 7278.0,
         "unit": "억원"
       },
       "week": {
-        "change": -193.23,
-        "changePct": -2.81,
+        "change": -170.69,
+        "changePct": -2.48,
         "samples": 6
       }
     },
@@ -36,28 +36,28 @@
       "name": "KOSDAQ",
       "ticker": "2001",
       "naverCode": "KOSDAQ",
-      "close": 818.79,
-      "change": 5.46,
-      "changePct": 0.67,
+      "close": 821.31,
+      "change": 7.98,
+      "changePct": 0.98,
       "date": "2026-08-25",
-      "tradedAt": "2026-08-25T13:48:00+09:00",
+      "tradedAt": "2026-08-25T14:18:00+09:00",
       "marketStatus": "OPEN",
       "prevClose": 813.33,
       "open": 806.93,
-      "high": 819.42,
+      "high": 821.48,
       "low": 781.89,
       "high52w": 1229.42,
       "low52w": 630.99,
       "dealTrend": {
         "bizdate": "20260825",
-        "foreign": 481.0,
-        "personal": -43.0,
-        "institutional": -310.0,
+        "foreign": 670.0,
+        "personal": -405.0,
+        "institutional": -135.0,
         "unit": "억원"
       },
       "week": {
-        "change": -15.41,
-        "changePct": -1.85,
+        "change": -12.89,
+        "changePct": -1.55,
         "samples": 6
       }
     },
@@ -65,28 +65,28 @@
       "name": "KOSPI 200",
       "ticker": "1028",
       "naverCode": "KPI200",
-      "close": 1049.36,
-      "change": -4.65,
-      "changePct": -0.44,
+      "close": 1053.14,
+      "change": -0.87,
+      "changePct": -0.08,
       "date": "2026-08-25",
-      "tradedAt": "2026-08-25T13:49:00+09:00",
+      "tradedAt": "2026-08-25T14:18:00+09:00",
       "marketStatus": "OPEN",
       "prevClose": 1054.01,
       "open": 1025.65,
-      "high": 1052.6,
+      "high": 1054.2,
       "low": 1005.77,
       "high52w": 1518.11,
       "low52w": 422.19,
       "dealTrend": {
         "bizdate": "20260825",
-        "foreign": -27200.0,
-        "personal": 7624.0,
-        "institutional": 7044.0,
+        "foreign": -29168.0,
+        "personal": 8192.0,
+        "institutional": 7118.0,
         "unit": "억원"
       },
       "week": {
-        "change": -32.45,
-        "changePct": -3.0,
+        "change": -29.11,
+        "changePct": -2.69,
         "samples": 6
       }
     }
@@ -95,13 +95,13 @@
     {
       "name": "USD/KRW",
       "reutersCode": "FX_USDKRW",
-      "close": 1383.2,
-      "change": -0.8,
-      "changePct": -0.06,
+      "close": 1383.0,
+      "change": -1.0,
+      "changePct": -0.07,
       "date": "2026-08-25",
       "week": {
-        "change": -30.3,
-        "changePct": -2.14,
+        "change": -30.5,
+        "changePct": -2.16,
         "samples": 6
       }
     }
