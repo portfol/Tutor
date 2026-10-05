@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-02T19:01:35+09:00",
+  "updatedAt": "2026-10-05T12:31:09+09:00",
   "source": "Naver Finance Mobile API (KRX real-time feed)",
   "notice": "KRX 정보데이터시스템(data.krx.co.kr)이 로그인 월을 도입하여 익명 직접조회가 불가함에 따라 KRX 실시간 시세를 공급받는 네이버 금융 모바일 API를 경유한다. 값 단위: 지수=pt, 환율=KRW, 투자자별 순매수=억원.",
   "indices": [
@@ -11,7 +11,7 @@
       "change": 32.39,
       "changePct": 0.46,
       "date": "2026-10-02",
-      "tradedAt": "2026-10-02T16:15:00+09:00",
+      "tradedAt": "2026-10-02T20:15:00+09:00",
       "marketStatus": "CLOSE",
       "prevClose": 6971.35,
       "open": 6938.27,
@@ -21,9 +21,9 @@
       "low52w": 3522.54,
       "dealTrend": {
         "bizdate": "20261002",
-        "foreign": -1124.0,
-        "personal": -17660.0,
-        "institutional": 3968.0,
+        "foreign": -1080.0,
+        "personal": -17897.0,
+        "institutional": 4155.0,
         "unit": "억원"
       },
       "week": {
@@ -40,7 +40,7 @@
       "change": -1.0,
       "changePct": -0.11,
       "date": "2026-10-02",
-      "tradedAt": "2026-10-02T16:15:00+09:00",
+      "tradedAt": "2026-10-02T20:15:00+09:00",
       "marketStatus": "CLOSE",
       "prevClose": 894.29,
       "open": 893.22,
@@ -50,9 +50,9 @@
       "low52w": 630.99,
       "dealTrend": {
         "bizdate": "20261002",
-        "foreign": -1730.0,
-        "personal": 809.0,
-        "institutional": 938.0,
+        "foreign": -1767.0,
+        "personal": 841.0,
+        "institutional": 936.0,
         "unit": "억원"
       },
       "week": {
@@ -69,7 +69,7 @@
       "change": 4.57,
       "changePct": 0.41,
       "date": "2026-10-02",
-      "tradedAt": "2026-10-02T16:15:00+09:00",
+      "tradedAt": "2026-10-02T20:15:00+09:00",
       "marketStatus": "CLOSE",
       "prevClose": 1104.48,
       "open": 1098.33,
@@ -79,9 +79,9 @@
       "low52w": 492.46,
       "dealTrend": {
         "bizdate": "20261002",
-        "foreign": -1375.0,
-        "personal": -17802.0,
-        "institutional": 4438.0,
+        "foreign": -1310.0,
+        "personal": -18057.0,
+        "institutional": 4625.0,
         "unit": "억원"
       },
       "week": {
@@ -95,13 +95,13 @@
     {
       "name": "USD/KRW",
       "reutersCode": "FX_USDKRW",
-      "close": 1348.6,
-      "change": -10.9,
-      "changePct": -0.8,
+      "close": 1344.7,
+      "change": -14.8,
+      "changePct": -1.09,
       "date": "2026-10-02",
       "week": {
-        "change": -10.4,
-        "changePct": -0.77,
+        "change": -14.3,
+        "changePct": -1.05,
         "samples": 6
       }
     }
